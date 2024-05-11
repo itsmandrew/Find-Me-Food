@@ -26,12 +26,10 @@ def get_places(location, key):
 
     params = {
         'location': location,
-        'limit': 5
+        'limit': 25
     }
 
     response = requests.get(url, headers=headers, params=params, timeout=30)
-    print(f"Status Code: {response.status_code}")
-    print(f"Response Body: {response.text}")
 
     if response.status_code == 200:
         return response.json()
@@ -40,15 +38,21 @@ def get_places(location, key):
 
 def main():
     """Run the program"""
-    pass
-
-
-if __name__ == "__main__":
-
     with open(CREDS_PATH, 'r', encoding='utf-8') as json_file:
         loaded_data = json.load(json_file)
 
-    # Extracting data into variables
-    API_KEY = loaded_data.get("API_KEY", "")
+    # Extracting api_key into variable
+    api_key = loaded_data.get("API_KEY", "")
 
-    print(get_places("Los Angeles", API_KEY))
+    # Starting query and storing into variable
+    location = input("Enter a location (e.g., 'New York City, NY'): \n")
+    results = get_places(location, api_key)
+
+    businesses = results.get('businesses', [])
+
+    print(f'-------- Restaurants in {location} --------')
+    for index, hash_map in enumerate(businesses):
+        print(f'{index}. {hash_map["name"]}')
+
+if __name__ == "__main__":
+    main()
